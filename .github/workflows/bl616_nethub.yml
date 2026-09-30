@@ -12,12 +12,17 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4   # 最新版
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget xz-utils python3 python3-pip
+        sudo apt-get install -y wget xz-utils make gcc
         pip install pyserial
 
     - name: Download Nuclei RISC-V Toolchain
@@ -33,7 +38,7 @@ jobs:
         make
 
     - name: Upload firmware artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # 升级到 v4
       with:
         name: bl616-nethub-firmware
         path: examples/nethub/bl616/build/*.bin
