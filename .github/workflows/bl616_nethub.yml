@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4   # 最新版
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -32,13 +32,18 @@ jobs:
         tar -xf nuclei_riscv_gnu_toolchain_ubuntu64_202204.tar.xz -C /opt/nuclei_toolchain
         echo "/opt/nuclei_toolchain/nuclei_riscv_gnu_toolchain/bin" >> $GITHUB_PATH
 
+    - name: Verify toolchain
+      run: |
+        which riscv-nuclei-elf-gcc || echo "Toolchain not found!"
+        riscv-nuclei-elf-gcc --version || echo "Toolchain version check failed!"
+
     - name: Build BL616 nethub example
       run: |
         cd examples/nethub/bl616
-        make
+        make || { echo "Build failed with exit code $?"; exit 1; }
 
     - name: Upload firmware artifact
-      uses: actions/upload-artifact@v4   # 升级到 v4
+      uses: actions/upload-artifact@v4
       with:
         name: bl616-nethub-firmware
         path: examples/nethub/bl616/build/*.bin
